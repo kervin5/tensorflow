@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.4.3/dist/tfjs-vis.umd.min.js"></script>
+    <script>
+      async function plot(pointsArray, featureName) {
+        tfvis.render.scatterplot(
+          {
+            name: `${featureName} vs House Price`,
+          },
+          { values: [pointsArray], series: ["original"] },
+          {
+            xLabel: featureName,
+            yLabel: "Price",
+          }
+        );
+      }
+
+      (async () => {
+        const houseDalesDataSet = tf.data.csv(
+          "http://localhost:8000/kc_house_data.csv"
+        );
+        const sampleDataSet = houseDalesDataSet.take(10);
+        const dataArray = await sampleDataSet.toArray(10);
+
+        const points = houseDalesDataSet.map((record) => ({
+          x: record.sqft_living,
+          y: record.price,
+        }));
+
+        plot(await points.toArray(), "Square feet");
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
